@@ -6,7 +6,7 @@ let posts = []
 onAuthStateChanged(auth, (user) => {
     if (user) {
       
-        currentUser = user
+        currentUser = user.uid
         console.log("User is signed in")
         // ...
     } else {
@@ -17,6 +17,8 @@ onAuthStateChanged(auth, (user) => {
 document.querySelector("#signout").addEventListener("click", () => {
     signOut(auth).then(() => {
         console.log("SignedOut Successful!")
+         localStorage.removeItem("uid");
+  window.location.replace("./login.html");
     }).catch((error) => {
         console.error(error)
     });
