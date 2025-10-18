@@ -1,50 +1,67 @@
-import { getAuth, createUserWithEmailAndPassword, collection, addDoc,db ,signInWithPopup, GoogleAuthProvider,provider } from "./config.js";
+import { 
+  getAuth, 
+  createUserWithEmailAndPassword, 
+  db, 
+  signInWithPopup, 
+  provider 
+} from "./config.js";
+
+import { doc, setDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
 const auth = getAuth();
-let form = document.querySelector("form")
+let form = document.querySelector("form");
+
+// ✅ Register user with email & password
 form.addEventListener("submit", async (e) => {
-    e.preventDefault()
-    let email = document.querySelector("#email").value
-    let password = document.querySelector("#password").value
-    try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password)
-        const user = userCredential.user
-        window.localStorage.setItem("uid", JSON.stringify(user.uid))
-        const docRef = await addDoc(collection(db, "users"), {
-            displayName: user?.displayName,
-            email: user?.email,
-            phoneNumber: user?.phoneNumber,
-            photoURL: user?.photoURL,
-            creationTime: user?.metadata?.creationTime,
-            uid: user?.uid,
-        });
-        console.log("Document written with ID: ", docRef.id);
-        console.log("Registered Successfully!")
-         window.location.replace('./dashboard.html')
+  e.preventDefault();
+  let email = document.querySelector("#email").value.trim();
+  let password = document.querySelector("#password").value.trim();
 
-    } catch (error) {
-        console.error("Registeration Error!",error)
+  try {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
 
-    }
-})
-document.querySelector("#GoogleBtn").addEventListener("click",()=>{
-    signInWithPopup(auth, provider)
-  .then((result) => {
-    // This gives you a Google Access Token. You can use it to access the Google API.
-    const credential = GoogleAuthProvider.credentialFromResult(result);
-    const token = credential.accessToken;
-    // The signed-in user info.
+    // ✅ Save user data in Firestore (using UID as document ID)
+    await setDoc(doc(db, "users", user.uid), {
+      displayName: user.displayName || email.split("@")[0],
+      email: user.email,
+      phoneNumber: user.phoneNumber || null,
+      photoURL: user.photoURL || null,
+      creationTime: user.metadata.creationTime,
+      uid: user.uid,
+    });
+
+    // ✅ Save UID for session
+    localStorage.setItem("uid", user.uid);
+
+    console.log("✅ Registered Successfully!");
+    window.location.replace("./dashboard.html");
+  } catch (error) {
+    console.error("❌ Registration Error:", error);
+    alert(error.message);
+  }
+});
+
+// ✅ Register or login with Google
+document.querySelector("#GoogleBtn").addEventListener("click", async () => {
+  try {
+    const result = await signInWithPopup(auth, provider);
     const user = result.user;
-    // IdP data available using getAdditionalUserInfo(result)
-    // ...
-  }).catch((error) => {
-    // Handle Errors here.
-    const errorCode = error.code;
-    const errorMessage = error.message;
-    // The email of the user's account used.
-    const email = error.customData.email;
-    // The AuthCredential type that was used.
-    const credential = GoogleAuthProvider.credentialFromError(error);
-    // ...
-  });
 
-})
+    // ✅ Save or overwrite user data in Firestore
+    await setDoc(doc(db, "users", user.uid), {
+      displayName: user.displayName,
+      email: user.email,
+      phoneNumber: user.phoneNumber || null,
+      photoURL: user.photoURL || null,
+      creationTime: user.metadata.creationTime,
+      uid: user.uid,
+    });
+
+    localStorage.setItem("uid", user.uid);
+    window.location.replace("./dashboard.html");
+  } catch (error) {
+    console.error("❌ Google Sign-Up Error:", error);
+    alert(error.message);
+  }
+});

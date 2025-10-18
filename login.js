@@ -1,41 +1,40 @@
-import { getAuth, signInWithEmailAndPassword,GoogleAuthProvider,provider ,signInWithPopup } from "./config.js";
+import { getAuth, signInWithEmailAndPassword, signInWithPopup, provider } from "./config.js";
 
 const auth = getAuth();
-let SignInUser=async(e)=>{
-    e.preventDefault()
-    let email=document.querySelector("#signInEmail").value
-    let password=document.querySelector("#signInPassword").value
-    try {
-        const userCredential=await signInWithEmailAndPassword(auth, email, password)
-        const user=userCredential.user
-        console.log("Logging In...")
-        window.localStorage.setItem("uid", JSON.stringify(user.uid))
-        window.location.replace("./dashboard.html")
-    } catch (error) {
-        console.error("Login Error: ",error)
-    }
-}
-document.querySelector("#Login").addEventListener("submit",SignInUser)
 
-document.querySelector("#GoogleBtn").addEventListener("click",()=>{
-    signInWithPopup(auth, provider)
-  .then((result) => {
-    // This gives you a Google Access Token. You can use it to access the Google API.
-    const credential = GoogleAuthProvider.credentialFromResult(result);
-    const token = credential.accessToken;
-    // The signed-in user info.
+// ✅ Login with Email & Password
+document.querySelector("#Login").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const email = document.querySelector("#signInEmail").value.trim();
+  const password = document.querySelector("#signInPassword").value.trim();
+
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+
+    // ✅ Store UID for current session
+    localStorage.setItem("uid", user.uid);
+
+    console.log("✅ Logged in successfully!");
+    window.location.replace("./dashboard.html");
+  } catch (error) {
+    console.error("❌ Login Error:", error);
+    alert(error.message);
+  }
+});
+
+// ✅ Login with Google
+document.querySelector("#GoogleBtn").addEventListener("click", async () => {
+  try {
+    const result = await signInWithPopup(auth, provider);
     const user = result.user;
-    // IdP data available using getAdditionalUserInfo(result)
-    // ...
-  }).catch((error) => {
-    // Handle Errors here.
-    const errorCode = error.code;
-    const errorMessage = error.message;
-    // The email of the user's account used.
-    const email = error.customData.email;
-    // The AuthCredential type that was used.
-    const credential = GoogleAuthProvider.credentialFromError(error);
-    // ...
-  });
 
-})
+    // ✅ Save UID and redirect
+    localStorage.setItem("uid", user.uid);
+    window.location.replace("./dashboard.html");
+  } catch (error) {
+    console.error("❌ Google Login Error:", error);
+    alert(error.message);
+  }
+});

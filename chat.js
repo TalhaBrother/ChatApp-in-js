@@ -12,14 +12,32 @@ import {
     serverTimestamp 
 } from "./config.js";
 
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+
+const auth = getAuth();
 let loginUser = null;
 let selectedUser = null;
 let users = [];
 let messages = [];
 let chatUnsubscribe = null;
-let currentUser = JSON.parse(window.localStorage.getItem("uid"));
+let currentUser = null;
 
-// ✅ Fetch logged-in user
+// ✅ Wait for Firebase Auth user
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        currentUser = user.uid;
+        console.log("✅ Logged in user:", currentUser);
+        await fetchCurrentUser();
+
+        // 👇 wait a bit before loading users to ensure Firestore is ready
+        setTimeout(loadUsers, 500);
+    } else {
+        console.log("No user logged in — redirecting to login...");
+        window.location.replace("./login.html");
+    }
+});
+
+// ✅ Fetch logged-in user info from Firestore
 let fetchCurrentUser = async () => {
     try {
         const userDocRef = query(collection(db, "users"), where("uid", "==", currentUser));
@@ -27,23 +45,21 @@ let fetchCurrentUser = async () => {
         userSnap.forEach((doc) => {
             loginUser = { id: doc.id, ...doc.data() };
         });
+
+        document.querySelector("#name").innerHTML = 
+            loginUser?.displayName || loginUser?.email || "Unknown User";
     } catch (error) {
         console.error("Fetch User error!", error);
     }
 };
 
-fetchCurrentUser().then(() => {
-    document.querySelector("#name").innerHTML = loginUser?.displayName || loginUser?.email || "Unknown User";
-});
-
-// ✅ Load chat messages between selected users
+// ✅ Load chat messages between two users
 let getChat = async (user) => {
     selectedUser = user;
-    console.log("Selected User: ", selectedUser);
+    localStorage.setItem("selectedUserUID", user.uid); // ✅ Remember last chat
+    console.log("💬 Chatting with:", selectedUser.email || selectedUser.displayName);
 
-    if (typeof chatUnsubscribe === "function") {
-        chatUnsubscribe();
-    }
+    if (typeof chatUnsubscribe === "function") chatUnsubscribe();
 
     try {
         const q = query(
@@ -61,13 +77,12 @@ let getChat = async (user) => {
                 messages.push(doc.data());
             });
 
-            // ✅ Sort safely by timestamp
+            // Sort safely by timestamp
             messages.sort((a, b) => {
                 if (!a.createdAt || !b.createdAt) return 0;
                 return a.createdAt.seconds - b.createdAt.seconds;
             });
 
-            console.log("Messages: ", messages);
             renderChats();
         });
 
@@ -76,7 +91,7 @@ let getChat = async (user) => {
     }
 };
 
-// ✅ Show all users except the logged-in one
+// ✅ Render chat users list
 let renderUser = () => {
     const userBox = document.querySelector(".users-list");
     userBox.innerHTML = "";
@@ -88,22 +103,22 @@ let renderUser = () => {
                  style="cursor:pointer; padding:8px; border:1px solid #ccc; margin-bottom:5px; border-radius:8px;">
                  ${user.displayName || user.email}
             </div>`;
+
         userDiv.querySelector(".user-card").addEventListener("click", () => {
-            console.log("User clicked:", user);
             getChat(user);
-            alert(`Chatting with ${user.displayName || user.email}`);
         });
+
         userBox.appendChild(userDiv);
     });
 };
 
-// ✅ Show chat messages
+// ✅ Render chat messages
 let renderChats = () => {
     const messagesBox = document.querySelector(".messages-box");
     messagesBox.innerHTML = "";
 
     if (messages.length < 1) {
-        messagesBox.innerHTML = "No chats yet!";
+        messagesBox.innerHTML = `<p style="color:#777;">No chats yet</p>`;
         return;
     }
 
@@ -120,50 +135,56 @@ let renderChats = () => {
         messagesBox.appendChild(msgDiv);
     });
 
-    // Auto scroll to bottom
+    // Auto-scroll to bottom
     messagesBox.scrollTop = messagesBox.scrollHeight;
 };
 
-// ✅ Fetch all users and render
-const q = query(collection(db, "users"), orderBy("uid"));
-const unsubscribe = onSnapshot(q, (querySnapshot) => {
-    users = [];
-    querySnapshot.forEach((doc) => {
-        const user = doc.data();
-        if (user.uid !== currentUser) { // Skip current user
-            users.push({ ...user, id: doc.id });
+// ✅ Load all users except logged-in one
+let loadUsers = () => {
+    const q = query(collection(db, "users"), orderBy("uid"));
+    onSnapshot(q, (querySnapshot) => {
+        users = [];
+        querySnapshot.forEach((doc) => {
+            const user = doc.data();
+            if (user.uid !== currentUser) {
+                users.push({ ...user, id: doc.id });
+            }
+        });
+
+        renderUser();
+
+        // ✅ Restore last selected chat if exists
+        const lastUID = localStorage.getItem("selectedUserUID");
+        console.log("🕓 Restoring last chat with:", lastUID);
+
+        if (users.length > 0) {
+            const lastUser = users.find(u => u.uid === lastUID);
+            if (lastUser) {
+                getChat(lastUser);
+            } else {
+                getChat(users[0]); // fallback to first user
+            }
         }
     });
-
-    console.log("Rendered Users:", users);
-    renderUser();
-
-    // ✅ Auto-select first user if available
-    if (users.length > 0 && !selectedUser) {
-        getChat(users[0]);
-        alert(`Auto-selected first user: ${users[0].displayName || users[0].email}`);
-    }
-});
+};
 
 // ✅ Send message
 let sendMessage = async (value) => {
-    try {
-        if (!selectedUser?.uid) {
-            console.error("No user selected while sending message!");
-            alert("Please select a user before sending a message.");
-            return;
-        }
+    if (!selectedUser?.uid) {
+        alert("Please select a user before sending a message.");
+        return;
+    }
 
+    try {
         const docRef = await addDoc(collection(db, "messages"), {
             text: value,
             to: selectedUser?.uid,
             from: currentUser,
             createdAt: serverTimestamp(),
         });
-
         console.log("Message sent with ID: ", docRef.id);
     } catch (error) {
-        console.error("Message Sent Error!", error);
+        console.error("Message Send Error!", error);
     }
 };
 
@@ -173,9 +194,7 @@ document.querySelector("#send-btn").addEventListener("click", () => {
     const msg = MsgInput.value.trim();
 
     if (msg.length < 1) return;
-
     if (!selectedUser?.uid) {
-        console.error("No user selected!");
         alert("Please select a user to chat with.");
         return;
     }
@@ -183,3 +202,9 @@ document.querySelector("#send-btn").addEventListener("click", () => {
     sendMessage(msg);
     MsgInput.value = "";
 });
+
+// ✅ Keep selected user in localStorage after refresh
+// ❌ Do NOT clear this on reload
+// window.addEventListener("beforeunload", () => {
+//     localStorage.removeItem("selectedUserUID");
+// });
