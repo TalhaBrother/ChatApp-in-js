@@ -1,46 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <style>
-        .header{
-            display: flex;
-            justify-content: space-between;
-        }
-        .posts-box{
-            margin-top: 10px;
-        }
-        .post-card{
-            border: 1px solid black;
-            padding: 5px;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard</title>
+
+  <!-- Link to external stylesheet -->
+  <link rel="stylesheet" href="style.css" />
 </head>
-<body>
-    <nav><div><a href="./chat.html">chats</a></div></nav>
-    <div class="header">
-        <h2 id="user-name"></h2>
-        <button id="logoutBtn">Logout</button>
+<body class="dashboard-body">
+  
+  <nav>
+    <div><a href="./chat.html">Chats</a></div>
+  </nav>
 
-    <button id="signout">sign Out</button>
-    </div>
-
-
+  <div class="header">
+    <h2 id="user-name">Welcome, User</h2>
     <div>
-        <input type="text" placeholder="Enter a text to create post" id="post-input">
-        <button id="post-btn">create post</button>
-            <div class="update"></div>
-
+      <button id="logoutBtn">Logout</button>
+      <button id="signout">Sign Out</button>
     </div>
+  </div>
 
-    <div class="posts-box">
+  <div class="update">
+    <input type="text" id="post-input" placeholder="Enter a text to create post" />
+    <button id="post-btn">Create Post</button>
+  </div>
 
-    </div>
-    <script type="module" src="./logout.js"></script>
+  <div class="posts-box">
+    <!-- Posts will appear here -->
+  </div>
 
-    <script type="module" src="./dashboard.js"></script>
-
+  <script type="module" src="./logout.js"></script>
+  <script type="module" src="./dashboard.js"></script>
 </body>
 </html>

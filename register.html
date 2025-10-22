@@ -1,24 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
-    <script src="register.js" type="module" defer></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Register | ChatApp</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="register.js" type="module" defer></script>
 </head>
 <body>
-    <h2>Register</h2>
-    <form>
-        <input type="email" name="Email" id="email">
-        <input type="password" name="Password" id="password">
-        <button type="submit" id="registerBtn">Register</button>
-    </form>
+  <div class="auth-container">
+    <div class="auth-card">
+      <div class="illustration small">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M10 20a10 10 0 0 1 10-10h60a10 10 0 0 1 10 10v35a10 10 0 0 1-10 10H45l-15 15v-15H20a10 10 0 0 1-10-10V20z"
+            fill="url(#grad2)"
+          />
+          <defs>
+            <linearGradient id="grad2" x1="0" x2="1" y1="0" y2="1">
+              <stop offset="0%" stop-color="#a0e9ff" />
+              <stop offset="100%" stop-color="#89f7de" />
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
 
-    <div class="GoogleSignIn">
-        <button id="GoogleBtn">SignInWithGoogle</button>
+      <h2>Create an Account</h2>
+      <p class="tagline">Join ChatApp and start messaging instantly.</p>
+
+      <form class="auth-form">
+        <input type="email" id="email" placeholder="Email" required />
+        <input type="password" id="password" placeholder="Password" required />
+        <button type="submit" id="registerBtn" class="cta-btn">Register</button>
+      </form>
+
+      <div class="GoogleSignIn">
+        <button id="GoogleBtn" class="google-btn">Sign in with Google</button>
+      </div>
+
+      <p class="switch-link">
+        Already registered?
+        <a href="login.html">Login here</a>
+      </p>
     </div>
-    <div>
-        <h3>Registered?<a href="login.html">Login here</a></h3>
-    </div>
+  </div>
 </body>
 </html>

@@ -1,28 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chats</title>
-    <script type="module" src="./logout.js" defer></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chats</title>
 
-    <script src="chat.js" type="module" defer></script>
+  <!-- External CSS -->
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- JS Files -->
+  <script type="module" src="./logout.js" defer></script>
+  <script type="module" src="./chat.js" defer></script>
 </head>
 <body>
-      <div id="name"></div>
-    <div><a href="./dashboard.html">back</a></div>
+  <nav>
+    <div><a href="./dashboard.html">← Back to Dashboard</a></div>
+  </nav>
 
-    <div class="main">
-        <div class="users-list"></div>
-        <div class="chat-box">
-            <div class="messages-box"></div>
-            <div class="sent-box">
-                <input id="message-inp" type="text" placeholder="send message">
-                <button id="send-btn">send</button>
-            </div>
-            <button id="logoutBtn">Logout</button>
+  <div class="chat-header">
+    <h2 id="name">Chat Room</h2>
+    <button id="logoutBtn">Logout</button>
+  </div>
 
-        </div>
+  <div class="main">
+    <div class="users-list">
+      <!-- User list dynamically loaded -->
     </div>
+
+    <div class="chat-box">
+      <div class="messages-box">
+        <!-- Chat messages appear here -->
+      </div>
+
+      <div class="sent-box">
+        <input id="message-inp" type="text" placeholder="Type a message..." />
+        <button id="send-btn">Send</button>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
