@@ -313,6 +313,23 @@ nav a:hover {
   max-width: 900px;
   flex-wrap: wrap;
 }
+.chat-header a {
+  text-decoration: none;
+  color: #004f5c;
+  font-weight: 500;
+  border-radius: 25px;
+  background: linear-gradient(135deg, #a0e9ff, #89f7de);
+  padding: 10px 16px;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 10px rgba(137, 247, 222, 0.2);
+}
+
+.chat-header a:hover {
+  background: linear-gradient(135deg, #89f7de, #66d6ff);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(137, 247, 222, 0.35);
+}
 
 /* Users List */
 .users-list {
