@@ -191,33 +191,60 @@ h1 {
 /* ===========================
    DASHBOARD PAGE
 =========================== */
+body.dashboard-body {
+  background: linear-gradient(135deg, #e6f9ff, #f0fffa);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ====== NAVIGATION BAR ====== */
 nav {
   background: linear-gradient(135deg, #a0e9ff, #89f7de);
   padding: 1rem 2rem;
-  text-align: left;
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 nav a {
   text-decoration: none;
   font-weight: 600;
   color: #004f5c;
+  transition: color 0.3s ease;
 }
+
 nav a:hover {
   color: #0077b6;
 }
 
+/* ====== HEADER SECTION ====== */
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem 2rem;
   background: #ffffffcc;
   border-radius: 16px;
+  padding: 1.5rem 2rem;
   max-width: 900px;
   width: 90%;
-  margin: 2rem auto;
+  margin: 2rem auto 1rem auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
   flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.header h2 {
+  color: #004f5c;
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+.header div {
+  display: flex;
+  gap: 0.8rem;
 }
 
 #logoutBtn,
@@ -225,7 +252,7 @@ nav a:hover {
   background: linear-gradient(135deg, #a0e9ff, #89f7de);
   border: none;
   color: #004f5c;
-  padding: 0.6rem 1.2rem;
+  padding: 0.6rem 1.3rem;
   border-radius: 30px;
   font-weight: 600;
   cursor: pointer;
@@ -235,39 +262,53 @@ nav a:hover {
 #logoutBtn:hover,
 #signout:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(137, 247, 222, 0.3);
+  box-shadow: 0 4px 10px rgba(137, 247, 222, 0.4);
 }
 
-/* Post area */
+/* ====== CREATE POST SECTION ====== */
 .update {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  width: 100%;
+  gap: 0.7rem;
+  width: 90%;
+  max-width: 800px;
+  margin: 0 auto 2rem auto;
 }
 
 #post-input {
-  width: 80%;
-  max-width: 600px;
+  flex: 1 1 70%;
+  min-width: 250px;
   padding: 0.9rem 1rem;
   border: 1px solid #cdefff;
   border-radius: 12px;
   outline: none;
   background: #ffffffcc;
+  transition: all 0.3s ease;
+}
+
+#post-input:focus {
+  border-color: #89f7de;
+  box-shadow: 0 0 6px rgba(137, 247, 222, 0.4);
 }
 
 #post-btn {
   background: linear-gradient(135deg, #a0e9ff, #89f7de);
   border: none;
-  padding: 0.9rem 1.2rem;
+  padding: 0.9rem 1.4rem;
   border-radius: 25px;
   color: #004f5c;
   font-weight: 600;
   cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-/* Posts grid */
+#post-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(137, 247, 222, 0.4);
+}
+
+/* ====== POSTS SECTION ====== */
 .posts-box {
   margin: 2rem auto;
   max-width: 800px;
@@ -277,14 +318,47 @@ nav a:hover {
 }
 
 .post-card {
-  background: #ffffffcc;
+  background: #ffffffee;
   border: 1px solid #d8f5f8;
-  padding: 1rem 1.2rem;
+  padding: 1rem 1.3rem;
   border-radius: 16px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
+  transition: all 0.3s ease;
+}
+
+.post-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.post-text {
+  color: #004f5c;
+  font-size: 1rem;
+  flex: 1;
+}
+
+.post-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.post-btn {
+  background: linear-gradient(135deg, #a0e9ff, #89f7de);
+  border: none;
+  color: #004f5c;
+  border-radius: 20px;
+  padding: 0.4rem 0.8rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.post-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(137, 247, 222, 0.4);
 }
 
 /* ===========================
@@ -471,7 +545,11 @@ nav a:hover {
 }
 
 /* --- RESPONSIVE --- */
+/* 🌐 Responsive Design */
+
+/* Tablets and below */
 @media (max-width: 1024px) {
+  /* 🔹 App-wide styles */
   .main {
     flex-direction: column;
     align-items: center;
@@ -484,21 +562,38 @@ nav a:hover {
     width: 90%;
     height: 400px;
   }
+
+  /* 🔹 Dashboard-specific */
+  .header {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+
+  .update {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #post-input {
+    width: 90%;
+  }
+
+  .posts-box {
+    width: 90%;
+  }
 }
 
+/* Phones */
 @media (max-width: 600px) {
+  /* 🔹 App-wide styles */
   body {
     padding: 1rem;
   }
-  .header, .chat-header {
+  .header,
+  .chat-header {
     flex-direction: column;
     text-align: center;
-  }
-  #post-input {
-    width: 100%;
-  }
-  .posts-box {
-    width: 100%;
   }
   .sent-box {
     flex-direction: column;
@@ -509,5 +604,44 @@ nav a:hover {
   }
   .users-list {
     width: 100%;
+  }
+
+  /* 🔹 Dashboard-specific */
+  nav {
+    text-align: center;
+  }
+
+  .header {
+    width: 100%;
+    margin: 1rem auto;
+    padding: 1rem;
+  }
+
+  #user-name {
+    font-size: 1.2rem;
+  }
+
+  #logoutBtn,
+  #signout {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+
+  .update {
+    width: 100%;
+  }
+
+  #post-input {
+    width: 100%;
+  }
+
+  .posts-box {
+    width: 100%;
+  }
+
+  .post-card {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.8rem;
   }
 }
