@@ -1,40 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
+  <title>Chat Analytics Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Chat Analytics</title>
-
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="analytics.js" defer></script>
 </head>
-
 <body>
   <header>📊 Chat Analytics Dashboard</header>
 
   <nav>
-    <a href="chat.html">← Back to Chats</a>
+    <a href="chat.html">← Back to Chat</a>
   </nav>
 
   <div class="container">
-
-    <div id="mostActive">
-      <!-- Most Active User Will Load Here -->
-    </div>
+    <div id="mostActive"></div>
 
     <div class="chart-row">
       <div class="chart-container">
         <h2>Messages per User</h2>
         <canvas id="userChart"></canvas>
       </div>
-
       <div class="chart-container">
         <h2>Messages per Day</h2>
         <canvas id="dailyChart"></canvas>
       </div>
     </div>
   </div>
-
 </body>
 </html>

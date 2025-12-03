@@ -3,41 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Chats</title>
-
-  <!-- External CSS -->
+  <title>Group Chat</title>
   <link rel="stylesheet" href="style.css" />
-
-  <!-- JS Files -->
-  <script type="module" src="./logout.js" defer></script>
-  <script type="module" src="./chat.js" defer></script>
+  <script src="chat.js" defer></script>
 </head>
 <body>
+  <header>💬 Group Chat</header>
+
   <nav>
-    <div><a href="./dashboard.html">← Back to Dashboard</a></div>
+    <a href="analytics.html">📊 Analytics</a>
   </nav>
 
-  <div class="chat-header">
-    <h2 id="name">Chat Room</h2>
-     <a href="analytics.html">Analytics</a>
-    <button id="logoutBtn">Logout</button>
-   
-  </div>
+  <div class="chat-container">
+    <div class="messages-box" id="messagesBox"></div>
 
-  <div class="main">
-    <div class="users-list">
-      <!-- User list dynamically loaded -->
-    </div>
-
-    <div class="chat-box">
-      <div class="messages-box">
-        <!-- Chat messages appear here -->
-      </div>
-
-      <div class="sent-box">
-        <input id="message-inp" type="text" placeholder="Type a message..." />
-        <button id="send-btn">Send</button>
-      </div>
+    <div class="send-box">
+      <input type="text" id="usernameInp" placeholder="Your Name" />
+      <input type="text" id="messageInp" placeholder="Type a message..." />
+      <button id="sendBtn">Send</button>
     </div>
   </div>
 </body>
