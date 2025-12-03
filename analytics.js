@@ -1,15 +1,12 @@
-// Dummy data if none exists
-if (!localStorage.getItem("chatHistory")) {
-  const dummy = [
-    { user: "Alice", text: "Hi", timestamp: Date.now() - 86400000 * 2 },
-    { user: "Bob", text: "Hello", timestamp: Date.now() - 86400000 },
-    { user: "Alice", text: "How are you?", timestamp: Date.now() },
-    { user: "Charlie", text: "Good!", timestamp: Date.now() }
-  ];
-  localStorage.setItem("chatHistory", JSON.stringify(dummy));
-}
+// Load chat history from localStorage
+let history = JSON.parse(localStorage.getItem("chatHistory")) || [];
 
-const history = JSON.parse(localStorage.getItem("chatHistory")) || [];
+// ---- FIX: Normalize usernames ---- //
+history = history.map(m => ({
+  user: m.user || m.name || m.username || m.from || m.sender || "Unknown",
+  text: m.text || m.message || m.msg || "",
+  timestamp: m.timestamp || Date.now()
+}));
 
 // Messages per user
 const userStats = {};
@@ -27,14 +24,18 @@ history.forEach(m => {
 // Most active user
 let maxUser = "No Data";
 let maxCount = 0;
+
 if (Object.keys(userStats).length > 0) {
-  maxUser = Object.keys(userStats).reduce((a, b) => userStats[a] > userStats[b] ? a : b);
+  maxUser = Object.keys(userStats)
+    .reduce((a, b) => userStats[a] > userStats[b] ? a : b);
   maxCount = userStats[maxUser];
 }
+
+// Display most active
 document.getElementById("mostActive").innerHTML = `
   <div class="highlight-box">
-    🏆 Most Active: <strong>${maxUser}</strong>  
-    <br>💬 Messages: ${maxCount}
+    🏆 Most Active: <strong>${maxUser}</strong><br>
+    💬 Messages: ${maxCount}
   </div>
 `;
 
@@ -49,7 +50,10 @@ new Chart(document.getElementById("userChart"), {
       borderRadius: 10
     }]
   },
-  options: { responsive: true, plugins: { legend: { display: false } } }
+  options: { 
+    responsive: true, 
+    plugins: { legend: { display: false } } 
+  }
 });
 
 // Daily Chart
@@ -66,5 +70,7 @@ new Chart(document.getElementById("dailyChart"), {
       fill: true
     }]
   },
-  options: { responsive: true }
+  options: { 
+    responsive: true 
+  }
 });
