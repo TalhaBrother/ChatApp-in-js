@@ -1,74 +1,78 @@
-// Load chat history
-let history = JSON.parse(localStorage.getItem("chatHistory")) || [];
+import { db, collection, getDocs } from "./config.js";
 
-// Normalize usernames
-history = history.map(m => ({
-  user: m.user || m.name || m.username || "Unknown",
-  text: m.text || m.message || "",
-  timestamp: m.timestamp || Date.now()
-}));
+async function loadAnalytics() {
+  const snap = await getDocs(collection(db, "messages"));
+  const history = [];
+  snap.forEach(doc => {
+    const data = doc.data();
+    if (data.timestamp) {
+      history.push(data);
+    }
+  });
 
-// Messages per user
-const userStats = {};
-history.forEach(m => {
-  userStats[m.user] = (userStats[m.user] || 0) + 1;
-});
+  // User stats
+  const userStats = {};
+  // Daily stats
+  const dailyStats = {};
 
-// Messages per day
-const dailyStats = {};
-history.forEach(m => {
-  const date = new Date(m.timestamp).toLocaleDateString();
-  dailyStats[date] = (dailyStats[date] || 0) + 1;
-});
+  history.forEach(m => {
+    const name = m.fromName || "Unknown";
+    userStats[name] = (userStats[name] || 0) + 1;
 
-// Most active user
-let maxUser = "No Data";
-let maxCount = 0;
-if (Object.keys(userStats).length > 0) {
-  maxUser = Object.keys(userStats).reduce((a, b) =>
-    userStats[a] > userStats[b] ? a : b
-  );
-  maxCount = userStats[maxUser];
+    const day = new Date(m.timestamp).toLocaleDateString();
+    dailyStats[day] = (dailyStats[day] || 0) + 1;
+  });
+
+  // Most active user
+  let topUser = "None", max = 0;
+  Object.keys(userStats).forEach(u => {
+    if (userStats[u] > max) { topUser = u; max = userStats[u]; }
+  });
+
+  document.getElementById("mostActive").innerHTML = `
+    🏆 <b>Most Active User:</b> ${topUser}<br>
+    💬 Messages: ${max}
+  `;
+
+  // Clear previous canvas if exists
+  const userCanvas = document.getElementById("userChart");
+  const dailyCanvas = document.getElementById("dailyChart");
+
+  userCanvas.getContext('2d').clearRect(0, 0, userCanvas.width, userCanvas.height);
+  dailyCanvas.getContext('2d').clearRect(0, 0, dailyCanvas.width, dailyCanvas.height);
+
+  // User chart
+  new Chart(userCanvas, {
+    type: 'bar',
+    data: {
+      labels: Object.keys(userStats),
+      datasets: [{
+        label: 'Messages per User',
+        data: Object.values(userStats),
+        backgroundColor: '#6a11cb'
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } }
+    }
+  });
+
+  // Daily chart
+  new Chart(dailyCanvas, {
+    type: 'line',
+    data: {
+      labels: Object.keys(dailyStats),
+      datasets: [{
+        label: 'Messages per Day',
+        data: Object.values(dailyStats),
+        borderColor: '#2575fc',
+        borderWidth: 2,
+        fill: false
+      }]
+    },
+    options: { responsive: true }
+  });
 }
 
-// Display most active
-document.getElementById("mostActive").innerHTML = `
-  <div class="highlight-box">
-    🏆 Most Active: <strong>${maxUser}</strong><br>
-    💬 Messages: ${maxCount}
-  </div>
-`;
-
-// User Chart
-new Chart(document.getElementById("userChart"), {
-  type: 'bar',
-  data: {
-    labels: Object.keys(userStats),
-    datasets: [{
-      data: Object.values(userStats),
-      backgroundColor: ['#6a11cb', '#2575fc', '#00c9a7', '#ffb347'],
-      borderRadius: 10
-    }]
-  },
-  options: { 
-    responsive: true, 
-    plugins: { legend: { display: false } } 
-  }
-});
-
-// Daily Chart
-new Chart(document.getElementById("dailyChart"), {
-  type: 'line',
-  data: {
-    labels: Object.keys(dailyStats),
-    datasets: [{
-      label: 'Messages per Day',
-      data: Object.values(dailyStats),
-      borderColor: '#2575fc',
-      backgroundColor: 'rgba(37,117,252,0.2)',
-      tension: 0.4,
-      fill: true
-    }]
-  },
-  options: { responsive: true }
-});
+window.addEventListener("load", loadAnalytics);
