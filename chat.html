@@ -1,27 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Group Chat</title>
-  <link rel="stylesheet" href="style.css" />
-  <script src="chat.js" defer></script>
+  <meta charset="UTF-8">
+  <title>Chat App</title>
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="chat.js" defer></script>
 </head>
 <body>
-  <header>💬 Group Chat</header>
-
-  <nav>
-    <a href="analytics.html">📊 Analytics</a>
-  </nav>
-
-  <div class="chat-container">
-    <div class="messages-box" id="messagesBox"></div>
-
-    <div class="send-box">
-      <input type="text" id="usernameInp" placeholder="Your Name" />
-      <input type="text" id="messageInp" placeholder="Type a message..." />
-      <button id="sendBtn">Send</button>
-    </div>
+  <div>
+    <h2 id="activeUser">Global Chat</h2>
+    <div id="usersBox"></div>
+    <div id="messagesBox" class="messages-box"></div>
+    <input type="text" id="messageInp" placeholder="Type a message">
+    <button id="sendBtn">Send</button>
+    <button onclick="window.location='analytics.html'">View Analytics</button>
   </div>
 </body>
 </html>
