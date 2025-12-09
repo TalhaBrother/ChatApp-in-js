@@ -1159,3 +1159,195 @@ nav a:hover {
     gap: 0.8rem;
   }
 }
+
+/* ==================================== */
+/* 💬 CHAT INTERFACE STYLES             */
+/* ==================================== */
+
+/* 1. Main Container (.chat-container) */
+.chat-container {
+  /* Dimensions & Positioning */
+  width: 90%;
+  max-width: 800px; /* Large on desktop */
+  height: 85vh;     /* Significant height */
+  margin: 20px auto; /* Center on page */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Ensures child elements (like messages) are clipped */
+
+  /* Aesthetics */
+  background-color: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15); /* Slight shadow */
+}
+
+/* 2. Messages Box (.messages-box) */
+.messages-box {
+  /* Layout & Scrolling */
+  flex-grow: 1; /* Occupies all remaining vertical space */
+  overflow-y: auto; /* Scrollable messages area */
+  padding: 20px;
+  
+  /* Message alignment */
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Space between messages */
+}
+
+/* Scrollbar styling (optional, for aesthetics) */
+.messages-box::-webkit-scrollbar {
+  width: 8px;
+}
+.messages-box::-webkit-scrollbar-thumb {
+  background-color: #0077b6; /* Match primary color */
+  border-radius: 10px;
+}
+.messages-box::-webkit-scrollbar-track {
+  background: #f0f0f0;
+}
+
+/* 3. Message Bubbles (.message) */
+.message {
+  /* Bubble Styling */
+  background-color: #e0f7fa; /* Light, clean background */
+  padding: 10px 15px;
+  border-radius: 18px 18px 18px 0; /* Rounded corners, sharper edge at the bottom-left */
+  max-width: 75%; /* Limit bubble width */
+  align-self: flex-start; /* Default align to left (other user) */
+  line-height: 1.4;
+  word-wrap: break-word; /* Ensure long words break */
+  font-size: 0.95rem;
+
+  /* Sender name differentiation (already handled by <strong> tag in JS) */
+  color: #333;
+}
+
+/* Style for the sender's name */
+.message strong {
+  font-weight: 700;
+  color: #0077b6; /* Highlight the name */
+}
+
+/* Optional: Style to differentiate 'self' messages (if implemented in JS) */
+.message.self {
+  background-color: #0077b6; /* Primary color background */
+  color: #ffffff;
+  align-self: flex-end; /* Align to the right */
+  border-radius: 18px 18px 0 18px; /* Sharper edge at the bottom-right */
+}
+.message.self strong {
+  color: #ffffff; /* Keep name white */
+}
+
+
+/* 4. Input Area (.send-box) */
+.send-box {
+  /* Layout */
+  display: flex;
+  padding: 15px 20px;
+  gap: 10px;
+  
+  /* Fixed to the bottom */
+  border-top: 1px solid #ddd;
+  background-color: #f9f9f9;
+}
+
+/* Input Fields & Button */
+.send-box input[type="text"] {
+  padding: 10px 15px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+}
+
+.send-box input[type="text"]:focus {
+  outline: none;
+  border-color: #0077b6;
+  box-shadow: 0 0 5px rgba(0, 119, 182, 0.2);
+}
+
+#usernameInp {
+  /* Smaller fixed width for desktop */
+  width: 150px; 
+  flex-shrink: 0;
+}
+
+#messageInp {
+  /* Takes up the remaining space */
+  flex-grow: 1;
+}
+
+#sendBtn {
+  background-color: #0077b6;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.1s;
+  flex-shrink: 0;
+}
+
+#sendBtn:hover {
+  background-color: #005f91;
+}
+
+#sendBtn:active {
+  transform: scale(0.98);
+}
+
+/* 5. Responsiveness */
+@media (max-width: 768px) {
+  .chat-container {
+    height: 90vh; /* Use slightly more vertical space on smaller screens */
+    margin: 10px auto;
+  }
+}
+
+/* Mobile-Specific Styles */
+@media (max-width: 600px) {
+  .chat-container {
+    border-radius: 0; /* Less distracting on mobile fullscreen */
+    box-shadow: none;
+    width: 100%;
+    max-width: 100%;
+    height: 100vh;
+  }
+  
+  .messages-box {
+    padding: 15px;
+    gap: 8px;
+  }
+  
+  .message {
+    max-width: 90%;
+    font-size: 0.9rem;
+    padding: 8px 12px;
+  }
+  
+  /* Condense the Send Box */
+  .send-box {
+    padding: 10px 15px;
+    gap: 8px;
+  }
+
+  /* Make the username input much smaller or hide it on very small screens, 
+     prioritizing the message input field. */
+  #usernameInp {
+    width: 90px;
+    font-size: 0.8rem;
+  }
+
+  #messageInp {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
+
+  #sendBtn {
+    padding: 8px 15px;
+    font-size: 0.9rem;
+  }
+}
