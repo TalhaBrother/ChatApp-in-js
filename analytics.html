@@ -3,15 +3,28 @@
 <head>
   <title>Analytics</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="style.css">
   <script type="module" src="analytics.js" defer></script>
 </head>
-<body>
-  <h2>Chat Analytics Dashboard</h2>
-  <div>
-    <p id="mostActive"></p>
-    <canvas id="userChart"></canvas>
-    <canvas id="dailyChart"></canvas>
-    <button onclick="window.location='chat.html'">Back to Chat</button>
+<body class="analytics-body">
+  <div class="analytics-container">
+    <h2>Chat Analytics Dashboard</h2>
+
+    <div id="mostActive" class="highlight-box">
+      </div>
+
+    <div class="chart-row" id="chart-wrapper">
+      <div class="chart-container">
+        <h3>User Activity</h3>
+        <canvas id="userChart"></canvas>
+      </div>
+      <div class="chart-container">
+        <h3>Daily Message Volume</h3>
+        <canvas id="dailyChart"></canvas>
+      </div>
+    </div>
+
+    <button onclick="window.location='chat.html'" class="cta-btn back-btn">Back to Chat</button>
   </div>
 </body>
 </html>

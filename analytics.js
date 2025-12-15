@@ -5,7 +5,7 @@ async function loadAnalytics() {
   const history = [];
   snap.forEach(doc => {
     const data = doc.data();
-    if (data.timestamp) {
+    if (data.timestamp && data.timestamp.toMillis) {
       history.push(data);
     }
   });

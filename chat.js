@@ -1,4 +1,4 @@
-import { auth, db, collection, addDoc, getDocs, onSnapshot, query, where, onAuthStateChanged } from "./config.js";
+import { auth, db, collection, addDoc, getDocs, onSnapshot, query, where, onAuthStateChanged, serverTimestamp } from "./config.js";
 
 let currentUser = null;
 let currentUserName = "";
@@ -22,7 +22,7 @@ onAuthStateChanged(auth, async (user) => {
 // Load all registered users
 async function loadUsers() {
   const usersBox = document.getElementById("usersBox");
-  usersBox.innerHTML = "";
+  usersBox.innerHTML = "<p>Select a user for private chat:</p>";
   const snap = await getDocs(collection(db, "users"));
   snap.forEach(doc => {
     if (doc.id === currentUser) return;
@@ -42,17 +42,17 @@ async function sendMessage() {
     text: txt,
     from: currentUser,
     fromName: currentUserName || "Unknown",
-    to: selectedUser || "ALL",
-    timestamp: Date.now()
+    to: selectedUser, // null for global chat
+    timestamp: serverTimestamp() // Add timestamp for analytics
   });
 
   document.getElementById("messageInp").value = "";
 }
 
 // Open private chat
-function openChat(uid, name) {
-  selectedUser = uid;
-  document.getElementById("activeUser").textContent = "Chat with: " + name;
+function openChat(id, name) {
+  selectedUser = id;
+  document.getElementById("activeUser").textContent = "Chatting with: " + name;
   loadPrivateMessages();
 }
 
@@ -61,6 +61,8 @@ document.getElementById("sendBtn").onclick = sendMessage;
 
 // Load global messages
 function loadAllMessages() {
+  selectedUser = null;
+  document.getElementById("activeUser").textContent = "Global Chat";
   const messagesBox = document.getElementById("messagesBox");
   const q = query(collection(db, "messages"));
   onSnapshot(q, snap => {
@@ -70,8 +72,15 @@ function loadAllMessages() {
       const div = document.createElement("div");
       div.className = "message";
 
-      // Name before message
-      div.innerHTML = `<strong>${msg.fromName || "Unknown"}:</strong> ${msg.text}`;
+      // ✅ IMPROVED: Add 'sent' class for current user's messages
+      if (msg.from === currentUser) {
+          div.classList.add('sent');
+          div.innerHTML = `<strong>You:</strong> ${msg.text}`;
+      } else {
+        // Name before message
+        div.innerHTML = `<strong>${msg.fromName || "Unknown"}:</strong> ${msg.text}`;
+      }
+      
       messagesBox.appendChild(div);
     });
     messagesBox.scrollTop = messagesBox.scrollHeight;
@@ -92,7 +101,13 @@ function loadPrivateMessages() {
         const div = document.createElement("div");
         div.className = "message";
 
-        div.innerHTML = `<strong>${msg.from === currentUser ? "You" : (msg.fromName || "Unknown")}:</strong> ${msg.text}`;
+        // ✅ IMPROVED: Add 'sent' class for current user's messages
+        if (msg.from === currentUser) {
+            div.classList.add('sent');
+            div.innerHTML = `<strong>You:</strong> ${msg.text}`;
+        } else {
+            div.innerHTML = `<strong>${msg.fromName || "Unknown"}:</strong> ${msg.text}`;
+        }
         messagesBox.appendChild(div);
       }
     });

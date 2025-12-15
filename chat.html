@@ -6,14 +6,28 @@
   <link rel="stylesheet" href="style.css">
   <script type="module" src="chat.js" defer></script>
 </head>
-<body>
-  <div>
+<body class="chat-body">
+  <div class="chat-header">
     <h2 id="activeUser">Global Chat</h2>
-    <div id="usersBox"></div>
-    <div id="messagesBox" class="messages-box"></div>
-    <input type="text" id="messageInp" placeholder="Type a message">
-    <button id="sendBtn">Send</button>
-    <button onclick="window.location='analytics.html'">View Analytics</button>
+    <div class="chat-header-actions">
+      <button onclick="window.location='analytics.html'" class="nav-btn">View Analytics</button>
+      <button onclick="window.location='dashboard.html'" class="nav-btn">Dashboard</button>
+    </div>
+  </div>
+
+  <div class="main-chat-container">
+    <div id="usersBox" class="users-list">
+      </div>
+    
+    <div class="chat-window">
+      <div id="messagesBox" class="messages-box">
+        </div>
+      
+      <div class="message-input-area">
+        <input type="text" id="messageInp" placeholder="Type a message">
+        <button id="sendBtn" class="send-btn">Send</button>
+      </div>
+    </div>
   </div>
 </body>
 </html>
