@@ -1,3 +1,4 @@
+// dashboard.js
 import { 
   addDoc, 
   auth, 
