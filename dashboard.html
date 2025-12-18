@@ -5,33 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dashboard</title>
 
-  <!-- Link to external stylesheet -->
   <link rel="stylesheet" href="style.css" />
 </head>
 <body class="dashboard-body">
   
   <nav>
     <div><a href="./chat.html">Chats</a></div>
+    <button id="signout" class="nav-btn">Sign Out</button> 
   </nav>
 
-  <div class="header">
-    <h2 id="user-name">Welcome, User</h2>
-    <div>
-      <button id="logoutBtn">Logout</button>
-      <button id="signout">Sign Out</button>
+  <div class="main-content">
+    <div class="header">
+      <h2 id="user-name">Welcome, User</h2>
     </div>
+
+    <div class="post-creation-area update">
+      <input type="text" id="post-input" placeholder="What's on your mind?" />
+      <button id="post-btn" class="cta-btn post-action-btn">Create Post</button> 
+    </div>
+
+    <div class="posts-box">
+      </div>
   </div>
 
-  <div class="update">
-    <input type="text" id="post-input" placeholder="Enter a text to create post" />
-    <button id="post-btn">Create Post</button>
-  </div>
-
-  <div class="posts-box">
-    <!-- Posts will appear here -->
-  </div>
-
-  <script type="module" src="./logout.js"></script>
   <script type="module" src="./dashboard.js"></script>
 </body>
 </html>

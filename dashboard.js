@@ -1,3 +1,4 @@
+// dashboard.js
 import { 
   addDoc, 
   auth, 
@@ -70,8 +71,9 @@ let updateData = async (id) => {
 
     console.log("✅ Successfully updated!");
     input.value = "";
-    document.querySelector(".update").style.display = "none";
+    document.querySelector(".post-creation-area").style.display = "flex"; // Show creation area
     document.querySelector("#post-btn").style.display = "block";
+    document.querySelector(".update").innerHTML = `<input type="text" id="post-input" placeholder="What's on your mind?" /><button id="post-btn" class="cta-btn post-action-btn">Create Post</button>`; // Reset input area
   } catch (error) {
     console.error("❌ Update error:", error);
   }
@@ -83,8 +85,10 @@ let editData = async (id) => {
   let findPost = posts.find((post) => post.id === id);
 
   input.value = findPost.text;
-  document.querySelector(".update").style.display = "flex";
-  document.querySelector("#post-btn").style.display = "none";
+  
+  // Temporarily clear and replace the input area content with the update button
+  let updateDiv = document.querySelector(".post-creation-area");
+  updateDiv.innerHTML = "";
 
   let updateBtn = document.createElement("span");
   updateBtn.id = "update_btn";
@@ -92,9 +96,14 @@ let editData = async (id) => {
   updateBtn.addEventListener("click", () => {
     updateData(findPost.id);
   });
-
-  let updateDiv = document.querySelector(".update");
-  updateDiv.innerHTML = "";
+  
+  let postInput = document.createElement("input");
+  postInput.type = "text";
+  postInput.id = "post-input";
+  postInput.placeholder = "Editing post...";
+  postInput.value = findPost.text;
+  
+  updateDiv.appendChild(postInput);
   updateDiv.appendChild(updateBtn);
 };
 
@@ -115,11 +124,15 @@ let renderPost = () => {
 
   posts.forEach((post) => {
     let cardDiv = document.createElement("div");
-    cardDiv.className = "postCard";
+    cardDiv.className = "post-card"; // ✅ UPDATED: use new consistent class name
+
+    // ✅ IMPROVED: structure for text and actions
     cardDiv.innerHTML = `
-      <span>${post?.text}</span>
-      <button class="edit-btn">Edit</button>
-      <button class="del-btn">Delete</button>
+      <span class="post-text">${post?.text}</span>
+      <div class="post-actions">
+        <button class="edit-btn post-btn">Edit</button>
+        <button class="del-btn post-btn delete-btn">Delete</button>
+      </div>
     `;
 
     cardDiv.querySelector(".edit-btn").addEventListener("click", () => {
